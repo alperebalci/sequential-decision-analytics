@@ -10,6 +10,7 @@ This repository is the primary umbrella repository for this Jors Academy researc
 - [`approximate-dynamic-programming-fleet-inventory`](projects/approximate-dynamic-programming-fleet-inventory/)
 - [`contextual-bandits-dynamic-procurement`](projects/contextual-bandits-dynamic-procurement/)
 - [`event-driven-continuous-reoptimization`](projects/event-driven-continuous-reoptimization/)
+- [`online-or-competitive-analysis`](projects/online-or-competitive-analysis/) — worst-case competitive guarantees for online decisions
 - [`or-gym-online-knapsack-dynamic-programming-python`](projects/or-gym-online-knapsack-dynamic-programming-python/)
 - [`pymdptoolbox-inventory-control`](projects/pymdptoolbox-inventory-control/)
 - [`sequential-decision-analytics-policy-classes`](projects/sequential-decision-analytics-policy-classes/)
