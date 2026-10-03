@@ -298,6 +298,15 @@ GitHub Actions runs the regression suite and executes the static decision exampl
 
 The implementations deliberately favor mathematical transparency and instructional clarity over production-oriented software architecture. They are intended to expose the sequential decision logic rather than hide it behind specialized libraries.
 
+## Roadmap
+
+Planned extensions that deepen the sequential-decision track without changing the repository's teaching focus:
+
+- policy iteration alongside the existing value-iteration example;
+- Partially Observable Markov Decision Processes (POMDPs) with belief-state updates under noisy observations;
+- approximate dynamic programming with value-function approximation;
+- optimal stopping and real-options examples.
+
 ## License
 
 This repository is provided for educational, academic, and other non-commercial use only. Commercial use is not permitted. See the `LICENSE` file for the applicable terms.
