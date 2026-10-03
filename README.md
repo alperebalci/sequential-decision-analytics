@@ -10,7 +10,9 @@ This repository is the primary umbrella repository for this Jors Academy researc
 - [`approximate-dynamic-programming-fleet-inventory`](projects/approximate-dynamic-programming-fleet-inventory/)
 - [`contextual-bandits-dynamic-procurement`](projects/contextual-bandits-dynamic-procurement/)
 - [`event-driven-continuous-reoptimization`](projects/event-driven-continuous-reoptimization/)
-- [`online-or-competitive-analysis`](projects/online-or-competitive-analysis/) — worst-case competitive guarantees for online decisions\n- [`or-gym-online-knapsack-dynamic-programming-python`](projects/or-gym-online-knapsack-dynamic-programming-python/)\n- [`pymdptoolbox-inventory-control`](projects/pymdptoolbox-inventory-control/)
+- [`online-or-competitive-analysis`](projects/online-or-competitive-analysis/) — worst-case competitive guarantees for online decisions
+- [`or-gym-online-knapsack-dynamic-programming-python`](projects/or-gym-online-knapsack-dynamic-programming-python/)
+- [`pymdptoolbox-inventory-control`](projects/pymdptoolbox-inventory-control/)
 - [`sequential-decision-analytics-policy-classes`](projects/sequential-decision-analytics-policy-classes/)
 
 Each consolidated project keeps its own files and a `SOURCE_REPOSITORY.md` provenance record. The snapshot preserves the source repository's default-branch files at consolidation time; repository-level history and metadata remain separate from the snapshot.
