@@ -4,12 +4,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 import math
 
-from .model import (
-    InventoryConfig,
-    InventoryState,
-    inventory_cost,
-    order_cost,
-)
+from .model import InventoryConfig, InventoryState, inventory_cost, order_cost
 
 
 @dataclass(frozen=True)
@@ -200,3 +195,71 @@ class DeterministicLookaheadPolicy:
             return best_value, best_order
 
         return plan(0, state.inventory)[1]
+
+
+@dataclass(frozen=True)
+class StochasticLookaheadPolicy:
+    """Limited-horizon stochastic DLA using the configured demand distribution."""
+
+    lookahead_horizon: int = 2
+    terminal_backlog_multiplier: float = 1.0
+    name: str = "DLA-stochastic-lookahead"
+
+    def __post_init__(self) -> None:
+        if self.lookahead_horizon <= 0:
+            raise ValueError("lookahead_horizon must be positive")
+        if self.terminal_backlog_multiplier < 0 or not math.isfinite(self.terminal_backlog_multiplier):
+            raise ValueError("terminal_backlog_multiplier must be finite and nonnegative")
+
+    def decide(self, state: InventoryState, config: InventoryConfig) -> int:
+        remaining = config.horizon - state.time
+        depth = min(self.lookahead_horizon, remaining)
+
+        @lru_cache(maxsize=None)
+        def plan(stage: int, inventory: int) -> tuple[float, int]:
+            if stage == depth:
+                terminal = self.terminal_backlog_multiplier * config.backlog_cost * max(-inventory, 0)
+                return terminal, 0
+
+            absolute_time = state.time + stage
+            best_value = math.inf
+            best_order = 0
+            for order in range(config.max_order + 1):
+                expected = 0.0
+                for demand, probability in zip(
+                    config.demand_values,
+                    config.probabilities_at(absolute_time),
+                ):
+                    ending = inventory + order - demand
+                    future, _ = plan(stage + 1, ending)
+                    expected += probability * (
+                        inventory_cost(ending, config)
+                        + config.discount * future
+                    )
+                value = order_cost(order, config) + expected
+                if value < best_value - 1e-12 or (
+                    math.isclose(value, best_value, abs_tol=1e-12) and order < best_order
+                ):
+                    best_value = value
+                    best_order = order
+            return best_value, best_order
+
+        return plan(0, state.inventory)[1]
+
+
+@dataclass(frozen=True)
+class HybridPFADLAPolicy:
+    """PFA guardrail wrapped around a deterministic DLA decision."""
+
+    target_inventory: int
+    lookahead_horizon: int = 3
+    forecast_bias: float = 0.0
+    name: str = "hybrid-PFA-DLA"
+
+    def decide(self, state: InventoryState, config: InventoryConfig) -> int:
+        pfa_action = OrderUpToPFA(self.target_inventory).decide(state, config)
+        dla_action = DeterministicLookaheadPolicy(
+            lookahead_horizon=self.lookahead_horizon,
+            forecast_bias=self.forecast_bias,
+        ).decide(state, config)
+        return min(config.max_order, max(pfa_action, dla_action))

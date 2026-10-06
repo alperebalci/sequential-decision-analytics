@@ -26,11 +26,15 @@ def run_experiment(
             "mean_demand": config.mean_demand,
             "mean_demand_by_period": [config.mean_demand_at(t) for t in range(config.horizon)],
             "demand_values": list(config.demand_values),
-            "demand_probability_schedule": [list(config.probabilities_at(t)) for t in range(config.horizon)],
+            "demand_probability_schedule": [
+                list(config.probabilities_at(t))
+                for t in range(config.horizon)
+            ],
         },
         "tuning": {
             "pfa_target_inventory": result.tuned_pfa_target,
             "cfa_forecast_bias": result.tuned_cfa_bias,
+            "hybrid_pfa_dla_target_inventory": result.tuned_hybrid_target,
         },
         "exact_dp_expected_cost": result.exact_expected_cost,
         "out_of_sample": [asdict(summary) for summary in result.summaries],

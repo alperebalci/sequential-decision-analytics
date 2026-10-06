@@ -6,7 +6,7 @@ from sda_policies.benchmark import benchmark_policies
 from sda_policies.model import InventoryConfig
 
 
-def test_benchmark_contains_all_four_classes_and_exact_reference():
+def test_benchmark_contains_extended_policy_set_and_exact_reference():
     result = benchmark_policies(
         config=InventoryConfig(horizon=6),
         training_replications=20,
@@ -19,11 +19,16 @@ def test_benchmark_contains_all_four_classes_and_exact_reference():
         "CFA-one-step",
         "VFA-coarse-value",
         "DLA-deterministic-lookahead",
+        "DLA-stochastic-lookahead",
+        "hybrid-PFA-DLA",
         "exact-DP-benchmark",
     }
     assert result.exact_expected_cost >= 0
     for summary in result.summaries:
         assert summary.ci95_low <= summary.mean_cost <= summary.ci95_high
+        assert 0 <= summary.backlog_period_rate <= 1
+        assert summary.mean_order_quantity >= 0
+        assert summary.mean_abs_ending_inventory >= 0
 
 
 def test_benchmark_is_reproducible():
@@ -55,4 +60,7 @@ def test_cli_outputs_valid_json():
     )
     payload = json.loads(completed.stdout)
     assert "out_of_sample" in payload
-    assert len(payload["out_of_sample"]) == 5
+    assert len(payload["out_of_sample"]) == 7
+    names = {entry["name"] for entry in payload["out_of_sample"]}
+    assert "DLA-stochastic-lookahead" in names
+    assert "hybrid-PFA-DLA" in names

@@ -3,7 +3,9 @@ from sda_policies.model import InventoryConfig, InventoryState
 from sda_policies.policies import (
     CFAOneStepPolicy,
     DeterministicLookaheadPolicy,
+    HybridPFADLAPolicy,
     OrderUpToPFA,
+    StochasticLookaheadPolicy,
     fit_coarse_vfa,
 )
 
@@ -48,3 +50,23 @@ def test_deterministic_lookahead_is_receding_horizon_and_feasible():
     late = policy.decide(InventoryState(7, 0), cfg)
     assert 0 <= early <= cfg.max_order
     assert 0 <= late <= cfg.max_order
+
+
+def test_stochastic_dla_full_horizon_matches_exact_initial_action():
+    cfg = InventoryConfig(horizon=4)
+    exact = solve_exact_dp(cfg)
+    policy = StochasticLookaheadPolicy(
+        lookahead_horizon=cfg.horizon,
+        terminal_backlog_multiplier=0.0,
+    )
+    assert policy.decide(
+        InventoryState(0, cfg.initial_inventory),
+        cfg,
+    ) == exact.policy_table[(0, cfg.initial_inventory)]
+
+
+def test_hybrid_pfa_dla_is_feasible_and_respects_guardrail():
+    cfg = InventoryConfig(horizon=5, max_order=6)
+    state = InventoryState(0, -3)
+    policy = HybridPFADLAPolicy(target_inventory=5, lookahead_horizon=2)
+    assert policy.decide(state, cfg) == cfg.max_order

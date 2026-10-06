@@ -134,7 +134,15 @@ implement only the first decision
 observe new information and repeat
 ```
 
-This is a receding-horizon direct lookahead. It is intentionally deterministic; stochastic lookahead is a separate and substantially more expensive subclass of DLA.
+This is a receding-horizon direct lookahead. The project now also implements `StochasticLookaheadPolicy`, which uses the configured demand distribution inside a limited lookahead tree and replans after each realized demand.
+
+A structural verification test sets the stochastic lookahead horizon equal to the complete finite horizon with no terminal approximation; under that setting its initial action must match the exact dynamic-programming policy.
+
+## Hybrid policy
+
+`HybridPFADLAPolicy` combines a PFA order-up-to guardrail with a deterministic DLA. The lookahead proposes an action, while the direct rule prevents the policy from ordering below the configured inventory target when the guardrail is more conservative.
+
+The hybrid is deliberately simple: it demonstrates that the four policy meta-classes are building blocks that can be composed rather than isolated algorithm silos.
 
 ## Exact dynamic-programming benchmark
 
@@ -170,7 +178,8 @@ A fixed set of demand traces is generated once and reused for every parameter ca
 The demo tunes:
 
 - the PFA order-up-to target,
-- the CFA forecast bias.
+- the CFA forecast bias,
+- the PFA target used by the PFA+DLA hybrid.
 
 ### Out-of-sample evaluation
 
@@ -180,28 +189,23 @@ Reported metrics include:
 
 - mean discounted cost,
 - standard error,
-- an approximate 95% confidence interval.
+- an approximate 95% confidence interval,
+- mean order quantity,
+- backlog-period rate,
+- mean absolute ending inventory,
+- policy-class and lookahead metadata,
+- whether the policy requires the explicit demand distribution,
+- the number of exposed/tuned parameters used by the demonstration.
 
 The exact DP's analytical expected cost is also reported separately from its Monte Carlo estimate.
 
-## Reproducible demo result
+## Reproducible benchmark output
 
-With the repository defaults, 120 training replications, 500 independent validation replications, and seed `2026`, the current implementation produces approximately:
+The benchmark is deterministic for fixed seeds and reports seven concrete policies: PFA, CFA, VFA, deterministic DLA, stochastic DLA, a PFA+DLA hybrid, and the exact-DP verification benchmark.
 
-```text
-Tuned PFA target:          6
-Tuned CFA forecast bias:   2.0
-Exact DP expected cost:    97.4493
+The numerical ranking is intentionally not hard-coded in the documentation. It depends on the demand process, horizon, cost structure, lookahead depth, approximation architecture, tuning budget and random seed. The JSON CLI output is the source of truth for a given experiment.
 
-Out-of-sample mean cost
-PFA:                       106.4520
-CFA:                       102.2960
-VFA:                        98.9198
-DLA:                       108.5618
-Exact DP benchmark:         97.7774
-```
-
-These numbers are demonstration results for this synthetic instance. They are not claims that one policy class is generally superior to another. Changing the demand process, cost structure, information state, action constraints, approximation architecture, or tuning budget can change the ranking.
+These results are not claims that one policy class is generally superior to another. The purpose is to compare architectures on one common state, decision, exogenous-information process, transition function and objective while also exposing operational service metrics and information requirements.
 
 ## Repository structure
 
@@ -213,8 +217,10 @@ These numbers are demonstration results for this synthetic instance. They are no
 │   ├── __init__.py
 │   ├── __main__.py
 │   ├── benchmark.py
+│   ├── contracts.py
 │   ├── dp.py
 │   ├── experiment.py
+│   ├── inventory_adapter.py
 │   ├── model.py
 │   ├── policies.py
 │   └── tuning.py
@@ -227,6 +233,12 @@ These numbers are demonstration results for this synthetic instance. They are no
 ├── README.md
 └── pyproject.toml
 ```
+
+## Generic simulator contract
+
+The package also exposes a method-neutral simulator interface in `sda_policies.contracts`. A sequential model supplies its initial state, feasible actions, one-step objective contribution and transition function; a policy supplies `decide(state, model)`; the simulator evaluates both on an explicit exogenous-information trace.
+
+The existing inventory benchmark is connected through `InventoryModelAdapter` and `InventoryPolicyAdapter`. Tests require the generic simulator to reproduce the legacy simulator exactly on the same demand trace. This creates a stable integration boundary for other portfolio models without forcing them into the inventory-specific API.
 
 ## Installation
 
@@ -266,13 +278,16 @@ The test suite verifies:
 - parameter-sensitive CFA decisions,
 - VFA feasibility,
 - exact/VFA agreement when the approximation grid is made exact,
-- DLA action feasibility,
+- deterministic DLA action feasibility,
+- stochastic-DLA action feasibility and full-horizon agreement with exact DP,
+- PFA+DLA hybrid guardrail behavior,
 - exact dynamic programming on a one-period problem with a known solution,
 - exact-policy simulation on random traces,
 - deterministic CRN-based tuning,
 - benchmark reproducibility,
 - confidence-interval consistency,
-- CLI JSON output.
+- operational policy metrics,
+- CLI JSON output with stochastic DLA and hybrid policies.
 
 GitHub Actions installs the package, compiles the source tree, and runs the test suite on Python 3.10 and Python 3.12.
 
@@ -286,6 +301,10 @@ GitHub Actions installs the package, compiles the source tree, and runs the test
 - Three of the four classes implemented here solve an embedded optimization problem. The PFA is the exception.
 - The exact DP benchmark is intentionally small. It should not be interpreted as a scalable replacement for approximate policies.
 - The confidence intervals summarize Monte Carlo sampling error for fixed selected policies. They do not fully account for the selection bias introduced during parameter tuning.
+
+## Upstream framing layer
+
+Before choosing a policy architecture for a real application, use the companion [decision-framing-and-sequential-decision-modeling](https://github.com/alperebalci/decision-framing-and-sequential-decision-modeling) repository to identify performance metrics, decisions/decision makers, uncertainty sources, state-information requirements and the formal model traceability.
 
 ## References
 
