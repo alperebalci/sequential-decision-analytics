@@ -217,8 +217,10 @@ These results are not claims that one policy class is generally superior to anot
 │   ├── __init__.py
 │   ├── __main__.py
 │   ├── benchmark.py
+│   ├── contracts.py
 │   ├── dp.py
 │   ├── experiment.py
+│   ├── inventory_adapter.py
 │   ├── model.py
 │   ├── policies.py
 │   └── tuning.py
@@ -231,6 +233,12 @@ These results are not claims that one policy class is generally superior to anot
 ├── README.md
 └── pyproject.toml
 ```
+
+## Generic simulator contract
+
+The package also exposes a method-neutral simulator interface in `sda_policies.contracts`. A sequential model supplies its initial state, feasible actions, one-step objective contribution and transition function; a policy supplies `decide(state, model)`; the simulator evaluates both on an explicit exogenous-information trace.
+
+The existing inventory benchmark is connected through `InventoryModelAdapter` and `InventoryPolicyAdapter`. Tests require the generic simulator to reproduce the legacy simulator exactly on the same demand trace. This creates a stable integration boundary for other portfolio models without forcing them into the inventory-specific API.
 
 ## Installation
 
