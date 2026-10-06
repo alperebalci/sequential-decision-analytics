@@ -8,7 +8,10 @@ from .experiment import run_experiment
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Compare the four Sequential Decision Analytics policy classes on one inventory model."
+        description=(
+            "Compare Sequential Decision Analytics policy architectures, "
+            "including PFA, CFA, VFA, deterministic/stochastic DLA and a hybrid."
+        )
     )
     parser.add_argument("--training-replications", type=int, default=120)
     parser.add_argument("--validation-replications", type=int, default=500)
