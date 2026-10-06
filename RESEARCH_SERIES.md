@@ -6,8 +6,9 @@ This repository is part of a broader set of independent projects on sequential d
 
 | Repository | Main focus | Role in the series |
 |---|---|---|
-| `sequential-decision-analytics` | Bandits, finite-horizon stochastic decisions, MDPs, dynamic programming, and model-free RL | General foundation |
-| `sequential-decision-analytics-policy-classes` | PFA, CFA, VFA, and DLA policy meta-classes on a common stochastic inventory problem | Policy-architecture comparison |
+| `decision-framing-and-sequential-decision-modeling` | Performance metrics, decisions/decision makers, uncertainty sources, universal-model traceability, and information requirements | Method-neutral problem-framing foundation |
+| `sequential-decision-analytics` | Bandits, finite-horizon stochastic decisions, MDPs, dynamic programming, and model-free RL | Sequential-decision foundation |
+| `sequential-decision-analytics-policy-classes` | PFA, CFA, VFA, deterministic/stochastic DLA, and hybrid policies on a common stochastic inventory problem | Policy-architecture comparison |
 | `industrial-maintenance-markov-decision-process-python` | Maintenance decisions as an MDP | Applied MDP case study |
 | `approximate-dynamic-programming-fleet-inventory` | Approximate dynamic programming for fleet/inventory decisions | ADP extension |
 | `contextual-bandits-dynamic-procurement` | Context-dependent exploration/exploitation in procurement | Contextual bandit extension |
@@ -45,15 +46,16 @@ An MDP formulation, approximate dynamic programming, contextual bandits, safe RL
 
 ## Suggested reading order
 
-1. `sequential-decision-analytics`
-2. `sequential-decision-analytics-policy-classes`
-3. `industrial-maintenance-markov-decision-process-python`
-4. `approximate-dynamic-programming-fleet-inventory`
-5. `contextual-bandits-dynamic-procurement`
-6. `reinforcement-learning-job-shop-scheduling-pytorch`
-7. `safe-rl-constrained-production-control`
-8. `offline-rl-industrial-process-control`
-9. `hierarchical-supply-chain-rl`
-10. `production-control-with-mpc-vs-rl`
+1. `decision-framing-and-sequential-decision-modeling`
+2. `sequential-decision-analytics`
+3. `sequential-decision-analytics-policy-classes`
+4. `industrial-maintenance-markov-decision-process-python`
+5. `approximate-dynamic-programming-fleet-inventory`
+6. `contextual-bandits-dynamic-procurement`
+7. `reinforcement-learning-job-shop-scheduling-pytorch`
+8. `safe-rl-constrained-production-control`
+9. `offline-rl-industrial-process-control`
+10. `hierarchical-supply-chain-rl`
+11. `production-control-with-mpc-vs-rl`
 
 The ordering is pedagogical rather than a ranking of methods.
