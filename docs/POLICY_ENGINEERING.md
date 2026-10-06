@@ -49,3 +49,25 @@ A multi-stage stochastic program can be interpreted as the optimization model in
 ## From model to implementation
 
 Before field deployment, a policy should also have an explicit information contract: which measurements, forecasts or beliefs it consumes; when they must be available; acceptable latency and quality; and fallback behavior when information is missing. The companion framing repository implements this specification layer.
+
+
+## Generic model-policy-simulator contract
+
+The policy-class project now includes a small structural contract in `sda_policies.contracts`:
+
+```text
+SequentialModel
+  initial_state()
+  feasible_actions(state)
+  objective_contribution(state, action, information)
+  transition(state, action, information)
+
+SequentialPolicy
+  decide(state, model)
+
+simulate_exogenous_trace(model, policy, trace)
+```
+
+The contract separates the decision problem from the policy and from the simulator. `InventoryModelAdapter` and `InventoryPolicyAdapter` wrap the existing inventory implementation without changing its policy code. A regression test runs the legacy inventory simulator and the generic simulator on the same exogenous-information trace and requires identical actions, terminal inventory and discounted objective value.
+
+The contract is intentionally small and uses Python structural typing. Other portfolio repositories can implement the same methods without importing the inventory model. This is the integration point for stochastic-programming, simulation, control and RL environments.
