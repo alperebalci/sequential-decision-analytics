@@ -24,6 +24,12 @@ Educational implementations of sequential decision-making algorithms for courses
 
 This repository provides compact and transparent examples of Sequential Decision Analytics (SDA). The code is designed for teaching rather than production deployment.
 
+### Decision framing comes first
+
+For real applications, this repository is intended to sit downstream of the companion [decision-framing-and-sequential-decision-modeling](https://github.com/alperebalci/decision-framing-and-sequential-decision-modeling) repository. That layer starts from performance metrics, decisions and decision makers, and sources of uncertainty before a solution method is selected. This repository then focuses on formal sequential models, policy architectures, simulation, and policy evaluation.
+
+See [docs/POLICY_ENGINEERING.md](docs/POLICY_ENGINEERING.md) for the portfolio-level workflow and the bridge from framing to PFA/CFA/VFA/DLA policies, stochastic lookahead and hybrids.
+
 The examples emphasize a common sequential structure:
 
 1. observe the current information or state,
