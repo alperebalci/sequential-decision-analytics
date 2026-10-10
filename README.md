@@ -71,9 +71,11 @@ sequential-decision-analytics/
 ├── LICENSE
 ├── requirements.txt
 ├── docs/
-│   └── SDA_CONCEPTS.md
+│   ├── SDA_CONCEPTS.md
+│   └── TWO_STAGE_NONANTICIPATIVITY.md
 ├── tests/
-│   └── test_static_decision_analysis.py
+│   ├── test_static_decision_analysis.py
+│   └── test_two_stage_nonanticipativity.py
 └── examples/
     ├── static_decision_under_uncertainty.py
     ├── epsilon_greedy_bandit.py
@@ -82,7 +84,8 @@ sequential-decision-analytics/
     ├── compare_bandit_policies.py
     ├── finite_horizon_inventory_control.py
     ├── mdp_value_iteration.py
-    └── q_learning_gridworld.py
+    ├── q_learning_gridworld.py
+    └── two_stage_nonanticipativity.py
 ```
 
 ## Example 0: Static Decision Analysis Under Uncertainty
@@ -227,6 +230,30 @@ Run:
 python examples/q_learning_gridworld.py
 ```
 
+## Example 8: Two-Stage Nonanticipativity Under Uncertainty
+
+This example compares an expected-demand predict-then-optimize policy with a
+two-stage stochastic optimization model. It also computes an intentionally
+nonimplementable wait-and-see lower bound to show why first-stage decisions
+cannot depend on future observations.
+
+- One common first-stage inventory order across every scenario.
+- Scenario-dependent emergency replenishment and leftover inventory recourse.
+- Operational decision cost, value of stochastic solution, and expected value
+  of perfect information (EVPI).
+- Five unit tests for feasibility, information constraints, and exact results.
+
+Run:
+
+~~~bash
+python examples/two_stage_nonanticipativity.py
+~~~
+
+See [the nonanticipativity tutorial](docs/TWO_STAGE_NONANTICIPATIVITY.md),
+which discusses the OR/ML perspective of
+[Buyuktahtakin (2026)](https://arxiv.org/abs/2604.11507). This is an
+independent educational example, not a reproduction of the paper's models.
+
 ## Suggested Teaching Sequence
 
 A useful classroom sequence is:
@@ -238,7 +265,8 @@ A useful classroom sequence is:
 4. bandit comparison: cumulative reward, regret, and repeated experiments,
 5. inventory control: state transitions, Bellman recursion, and finite-horizon dynamic programming,
 6. MDP value iteration: stationary state-action models and Bellman optimality,
-7. Q-learning: model-free temporal-difference learning.
+7. Q-learning: model-free temporal-difference learning,
+8. two-stage nonanticipativity: shared decisions, scenario recourse, and perfect-information bounds.
 
 This sequence provides a compact path from Sequential Decision Analytics to Operations Research and Reinforcement Learning.
 
